@@ -32,7 +32,7 @@ public class jdbcmysql {
 			Class.forName("com.mysql.jdbc.Driver"); 
 			//註冊driver 
 			con = DriverManager.getConnection( 
-			"jdbc:mysql://localhost/test?useUnicode=true&characterEncoding=Big5", 
+			"jdbc:mysql://localhost/employees?useUnicode=true&characterEncoding=Big5", 
 			"root","1234"); 
 			//取得connection
 			//jdbc:mysql://localhost/test?useUnicode=true&characterEncoding=Big5
@@ -73,9 +73,9 @@ public class jdbcmysql {
 	// VALUES (value1,value2,value3,...);
 	public void InsertRecord(String str)
 	{
-		String insertTableSQL = "INSERT INTO User"
-				+ "(id, name, passwd) VALUES"
-				+ "(?,?,?)";
+		String insertTableSQL = "INSERT INTO employees"
+				+ "(emp_no, birth_date, first_name, last_name, gender, hire_date) VALUES"
+				+ "(?,?,?,?,?,?)";
 		String[] token = str.split("VALUES");
 		String value = token[1];
 		value = value.replaceAll("[( )]", "");
@@ -84,11 +84,16 @@ public class jdbcmysql {
 			pst = con.prepareStatement(insertTableSQL);
 			// the first one element must be integer
 			pst.setInt(1, Integer.parseInt(values[0]));
-			// the remaining elements must be string
-			for(int i = 1; i < values.length; i++)
-			{
-				pst.setString(i+1, values[i]);
-			}
+			// the second column type is date YYYY-MM-DD
+			pst.setDate(2, java.sql.Date.valueOf(values[1]));
+			// the third column type is varchar
+			pst.setString(3, values[2]);
+			// the fourth column type is varchar
+			pst.setString(4, values[3]);
+			// the fifth column type is enum
+			pst.setString(5, values[4]);
+			// the sixth column type is date
+			pst.setDate(6, java.sql.Date.valueOf(values[5]));
 			// execute insert SQL stetement
 			pst.executeUpdate();
 		}
@@ -140,12 +145,14 @@ public class jdbcmysql {
 			stat = con.createStatement(); 
 			rs = stat.executeQuery(str); 
 			//System.out.println("ID\t\tName\t\tPASSWORD"); 
-			jdbcmysqlout.println("ID\t\tName\t\tPASSWORD");
+			jdbcmysqlout.println("emp_no\tbirth_date\tfirst_name\tlast_name\tgender\thire_date");
 		while(rs.next()) 
 		{ 
 			
 			//System.out.println(rs.getInt("id")+"\t\t"+ rs.getString("name")+"\t\t"+rs.getString("passwd")); 
-			jdbcmysqlout.println(rs.getInt("id")+"\t\t"+ rs.getString("name")+"\t\t"+rs.getString("passwd"));
+			jdbcmysqlout.println(rs.getInt("emp_no")+"\t"+ rs.getDate("birth_date")+"\t"+
+					rs.getString("first_name")+"\t"+rs.getString("last_name")+"\t"+
+					rs.getString("gender")+"\t"+rs.getDate("hire_date"));
 		} 
 		} 
 		catch(SQLException e) 
