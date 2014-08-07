@@ -40,6 +40,8 @@ public class jdbcmysqlserver {
                 	test.InsertRecord(s);
                 else if (jdbcmysql.UPDATE_TYPE == QueryType)
                 	test.UpdateRecord(s);
+                else if (jdbcmysql.SELECTCOUNT_TYPE == QueryType)
+                	test.SelectCount(s);
             }
             
             // close IO streams, then socket

@@ -25,6 +25,7 @@ public class jdbcmysql {
 	public static final int INSERT_TYPE = 2;
 	public static final int UPDATE_TYPE = 3;
 	public static final int DELETE_TYPE = 4;
+	public static final int SELECTCOUNT_TYPE = 5;
 	public static final int UNKNOWN_TYPE = 9;
 	
 	public jdbcmysql(Out out){
@@ -138,8 +139,39 @@ public class jdbcmysql {
 		}
 	}
 	
+	// This function returns the number of records in a table:
+	// SQL COUNT(*) Syntax: SELECT COUNT(*) FROM table_name
+	public void SelectCount(String str)
+	{
+		long startTime = System.nanoTime();
+		 // ... the code being measured ...
+		try
+		{
+			stat = con.createStatement();
+			rs = stat.executeQuery(str);
+			while(rs.next())
+			{
+				jdbcmysqlout.println("COUNT(*)="+rs.getInt("COUNT(*)"));
+			}
+			long estimatedTime = System.nanoTime() - startTime;
+			System.out.println("estimatedTime: "+ estimatedTime);
+		}
+		catch(SQLException e)
+		{
+			System.out.println("SelectCount Exception :" + e.toString()); 
+		}
+		finally
+		{
+			// Send the signal to client when query result are sent completely.
+			jdbcmysqlout.println("EOL");
+			Close();
+		}
+	}
+	
 	public void SelectTable(String str)
 	{ 
+		long startTime = System.nanoTime();
+		// ... the code being measured ...
 		try 
 		{ 
 			stat = con.createStatement(); 
@@ -153,7 +185,9 @@ public class jdbcmysql {
 			jdbcmysqlout.println(rs.getInt("emp_no")+"\t"+ rs.getDate("birth_date")+"\t"+
 					rs.getString("first_name")+"\t"+rs.getString("last_name")+"\t"+
 					rs.getString("gender")+"\t"+rs.getDate("hire_date"));
-		} 
+		}
+		long estimatedTime = System.nanoTime() - startTime;
+		System.out.println("estimatedTime: "+ estimatedTime);
 		} 
 		catch(SQLException e) 
 		{ 
@@ -169,8 +203,14 @@ public class jdbcmysql {
 	// Parse query type 
 	public int CheckQueryType(String str){
 		String[] token = str.split(" ");
+		// Select type divides two function, Select Count and Select 
 		if(new String("Select").equalsIgnoreCase(token[0]))
-			return SELECT_TYPE;
+		{
+			if (new String("Count(*)").equalsIgnoreCase(token[1]))
+				return SELECTCOUNT_TYPE;
+			else
+				return SELECT_TYPE;
+		}
 		else if(new String("Insert").equalsIgnoreCase(token[0]))
 			return INSERT_TYPE;
 		else if(new String("Update").equalsIgnoreCase(token[0]))
