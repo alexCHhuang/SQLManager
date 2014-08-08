@@ -3,12 +3,15 @@ SQLManager
 
 Academia Sinica project
 
-2014/7/25
-1. Complete Select query function
-2. Complete Delete function
-3. Set up GitHub in Ubuntu
+[Function Description]
 
-2014/8/6
+public void UpdateRecord(String str)
+Update table_name SET column1=value1, column2=value2,...
+WHERE some_column=some_value
+
+[Update History]
+
+=== 2014/8/6 ===
 
 Using employees table in employees database as a template,
 the employees table structure as follows.
@@ -29,3 +32,9 @@ the employees table structure as follows.
 	* The first column must be integer, the remaining columns must match the corresponding type of employees table.
 	* Support parsing the remaining column repeatedly
 2. Complete Update Record function
+
+=== 2014/7/25 ===
+1. Complete Select query function
+2. Complete Delete function
+3. Set up GitHub in Ubuntu
+
